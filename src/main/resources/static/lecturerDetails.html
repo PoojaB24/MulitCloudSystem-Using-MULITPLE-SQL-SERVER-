@@ -222,8 +222,6 @@
                 --c2: rgb(233, 168, 155);
                 --c3: rgb(216, 117, 199);
                 --c4: rgb(145, 43, 188);
-                --glass-bg: rgba(255,255,255,0.12);
-                --glass-border: rgba(255,255,255,0.25);
             }
             body {
                 margin:0; padding:0;
@@ -239,10 +237,7 @@
                 background: rgba(255,255,255,0.14); backdrop-filter: blur(18px);
                 border:1px solid rgba(255,255,255,0.25); border-radius:26px;
                 box-shadow:0 6px 28px rgba(0,0,0,0.18); padding:30px; overflow-y:auto;
-                -ms-overflow-style:none; scrollbar-width:none;
             }
-            .main-glass-card::-webkit-scrollbar{display:none;}
-            h2 {text-align:center;color:var(--c4); margin-bottom:20px;}
             .student-item {
                 margin-bottom:13px;
                 padding:12px;
@@ -250,7 +245,6 @@
                 border-radius:12px;
                 border:1px solid rgba(255,255,255,0.28);
             }
-            .student-item strong {color:#1a1a1a;}
         </style>
         </head>
         <body>
@@ -259,24 +253,70 @@
         `;
 
         const studentIds = map2[section] || [];
-        if (!studentIds.length) html += "<p>No students found.</p>";
-        else {
+
+        if (!studentIds.length) {
+            html += "<p>No students found.</p>";
+        } else {
             studentIds.forEach(id => {
-                const studentInfo = map1[id]; if (!studentInfo) return;
-                const name = studentInfo[0], roll = studentInfo[1];
+                const s = map1[id];
+                if (!s) return;
+
+                const name = s[0];
+                const roll = s[1];
+
                 const marksObj = map[id]?.find(m => m[subject] !== undefined);
                 const marks = marksObj ? marksObj[subject] : 'N/A';
+
                 html += `
-                    <div class="student-item">
-                        <strong>Name:</strong> ${name}<br>
-                        <strong>Roll No:</strong> ${roll}<br>
-                        <strong>Marks:</strong> ${marks}
-                    </div>
+                <div class="student-item">
+                    <strong>Name:</strong> ${name}<br>
+                    <strong>Roll No:</strong> ${roll}<br>
+                    <strong>Marks:</strong> <span id="mark-${id}">${marks}</span><br><br>
+
+                    <button class="btn" onclick="updateMarks(${id}, '${subject}', 'mark-${id}')">
+                        Update Marks
+                    </button>
+                </div>
                 `;
             });
         }
 
-        html += `</div></body></html>`;
+        html += `
+        </div>
+
+        <script>
+            function updateMarks(studentId, subject, markSpanId) {
+                const newMarks = prompt("Enter new marks:");
+
+                if (newMarks === null) return;
+                if (isNaN(newMarks) || newMarks < 0 || newMarks > 100) {
+                    alert("Invalid marks! Must be 0 - 100");
+                    return;
+                }
+
+                fetch("http://localhost:8080/api/student/update/marks", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        studentId: studentId,
+                        studentMark: Number(newMarks),
+                        subject: subject
+                    })
+                })
+                .then(res => res.text())
+                .then(msg => {
+                    alert(msg);
+                    document.getElementById(markSpanId).innerText = newMarks;
+                })
+                .catch(err => alert("Error: " + err));
+            }
+        <\/script>
+
+        </body></html>
+        `;
+
         newTab.document.write(html);
         newTab.document.close();
     }

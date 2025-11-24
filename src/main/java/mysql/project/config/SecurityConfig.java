@@ -20,6 +20,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/student/details/**").permitAll()
                         .requestMatchers("/api/student/lecturer/**").permitAll()
                         .requestMatchers("/api/student/lecturerDetails/**").permitAll()
+                        .requestMatchers("/api/student/update/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

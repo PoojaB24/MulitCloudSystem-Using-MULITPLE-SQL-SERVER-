@@ -96,7 +96,7 @@ public class LecturerService {
         return lecturerDetails;
     }
 
-    @Transactional //check once
+    @Transactional
     public ResponseEntity<?> changeMarks(ChangeMark changeMark){
         Marks marks=marksRepository.findByStudentIdAndSubject(changeMark.getStudentId(),changeMark.getSubject());
 
@@ -107,8 +107,10 @@ public class LecturerService {
         if(changeMark.getStudentMark()<0 || changeMark.getStudentMark()>100){
             return ResponseEntity.badRequest().body("Marks is not valid!");
         }
+
+        System.out.println(changeMark.getStudentMark()+" "+changeMark.getStudentId());
         marks.setMarks(changeMark.getStudentMark());
-        Marks marks1=marksRepository.save(marks);
+        marksRepository.save(marks);
         return ResponseEntity.ok("Marks updated successfully!");
     }
 }

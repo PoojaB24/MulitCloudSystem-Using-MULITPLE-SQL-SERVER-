@@ -19,7 +19,6 @@ import java.util.Set;
 @CrossOrigin(origins = "http://localhost:63342")
 @RestController
 @NoArgsConstructor
-
 public class StudentController {
     @Autowired
     private  StudentService studentService;
@@ -73,6 +72,7 @@ public class StudentController {
 
     @PatchMapping("/update/marks")
     public ResponseEntity<?> updateStudentMarks(@RequestBody ChangeMark changeMark){
+        System.out.println("Changing marks");
         return lecturerService.changeMarks(changeMark);
     }
 
