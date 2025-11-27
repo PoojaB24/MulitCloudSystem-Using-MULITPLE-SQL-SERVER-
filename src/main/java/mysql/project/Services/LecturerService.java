@@ -107,8 +107,6 @@ public class LecturerService {
         if(changeMark.getStudentMark()<0 || changeMark.getStudentMark()>100){
             return ResponseEntity.badRequest().body("Marks is not valid!");
         }
-
-        System.out.println(changeMark.getStudentMark()+" "+changeMark.getStudentId());
         marks.setMarks(changeMark.getStudentMark());
         marksRepository.save(marks);
         return ResponseEntity.ok("Marks updated successfully!");

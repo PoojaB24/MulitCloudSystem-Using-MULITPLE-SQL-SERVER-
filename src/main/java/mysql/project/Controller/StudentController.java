@@ -72,7 +72,6 @@ public class StudentController {
 
     @PatchMapping("/update/marks")
     public ResponseEntity<?> updateStudentMarks(@RequestBody ChangeMark changeMark){
-        System.out.println("Changing marks");
         return lecturerService.changeMarks(changeMark);
     }
 
